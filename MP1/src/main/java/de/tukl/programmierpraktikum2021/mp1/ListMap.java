@@ -21,69 +21,38 @@ public class ListMap<K, V> implements Map<K, V>{
 
     @Override
     public void put(K key, V value) {
-        ListElement<K,V> list2 = list;
-        ListElement<K,V> list3 = null;
-        while (list2 != null) {
-            if (list2.getKey() != key) {
-
-                if (list3 == null) list3 = new ListElement(list2.getKey(),list2.getValue());
-                else {
-                    while (list3.getNext() != null)
-                    list2.setNext();
-                    list3.setNext(list2);
-                }
-                list2 = list2.getNext();
-
+        ListElement<K,V> momentan = list;
+        while (momentan != null){
+            if (momentan.getKey() != key)
+                momentan = momentan.getNext();
+            else {
+                break;
             }
-            else break;
         }
-        ListElement<K,V> list4 = new ListElement(key, value);
-        System.out.println(list4.getKey());
-        if (list3 == null) list3 = new ListElement(key,value);
-        else {
-            System.out.println(list4.getKey());
-            list2 = list4;
-            list3.setNext(list2);
-        }
-
-        list = list3;
+        if (momentan == null) {
+            if (list == null) list = new ListElement<K,V>(key, value);
+            else {
+                ListElement i = list.getLastElem();
+                if (i == null)
+                    list.setNext(new ListElement<K,V>(key, value));
+                else i.setNext(new ListElement<K,V>(key,value));
+                }
+            }
+        else if (momentan.getKey() == key){
+            momentan.setValue(value);
+            }
     }
 
     @Override
     public void remove(K key) {
         ListElement<K,V> list2 = list;
-        ListElement<K,V> list3 = null;
+        ListElement<K,V> list3 = list;
         while (list2 != null) {
-            if (list2.getKey() != key) {
-                if (list3 == null) list3 = new ListElement(list2.getKey(),list2.getValue());
-                else {
-                    list3.setNext(list2);
-
-                    System.out.println(list3.getNext().getKey());
-                }
+            if (list2.getNext().getKey() != key)
                 list2 = list2.getNext();
-            }
-            else break;
-        }
-        if (list2 == null) {
+            else
 
         }
-
-        else if (list2.getKey() == key && list2.getNext() == null) {
-            if (list3 == null) list3 = list2.getNext();
-            else list3.setNext(null);
-        }
-        else if  (list2.getKey() == key && list2.getNext() != null) {
-            if (list3 == null) {
-                list3 = list2.getNext();
-                System.out.println("hi");
-            }
-
-            else list3.setNext(list2.getNext());
-        }
-        else if (list2 == null)
-            list3.setNext(null);
-        list = list3;
     }
 
     @Override
@@ -95,6 +64,7 @@ public class ListMap<K, V> implements Map<K, V>{
             counter ++;
             System.out.println(counter);
             System.out.println(list2.getKey());
+            System.out.println(list2.getValue());
             list2 = list2.getNext();
 
         }

@@ -37,8 +37,13 @@ public class ListElement<K, V> {
 
     public ListElement getLastElem() {
         ListElement<K,V> self = pointer ;
-        if (self == null) return self;
+        if (self == null) {
+            System.out.println(self);
+            return self;
+
+        }
         while(self.getNext() != null){
+            System.out.println(self.getNext());
             self = self.getNext();
         }
         return self;
