@@ -1,18 +1,18 @@
 package de.tukl.programmierpraktikum2021.mp1;
 
-public class TrieMap<K, V> implements Map<K, V> {
+public class TrieMap<V> implements Map<String, V> {
     @Override
-    public V get(K key) {
+    public V get(String key) {
         return null;
     }
 
     @Override
-    public void put(K key, V value) {
+    public void put(String key, V value) {
 
     }
 
     @Override
-    public void remove(K key) {
+    public void remove(String key) {
 
     }
 
@@ -22,7 +22,7 @@ public class TrieMap<K, V> implements Map<K, V> {
     }
 
     @Override
-    public void keys(K[] array) {
+    public void keys(String[] array) {
 
     }
 }
