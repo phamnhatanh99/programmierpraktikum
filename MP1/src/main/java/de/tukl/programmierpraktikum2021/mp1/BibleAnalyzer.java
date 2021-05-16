@@ -2,16 +2,11 @@ package de.tukl.programmierpraktikum2021.mp1;
 
 public class BibleAnalyzer {
     public static void countWords(Map<String, Integer> counts) {
-        int counter = 0;
-        for (String fixed : Util.getBibleWords()) {
-            counter = 0;
-            if(counts.get(fixed) == null){
-                for (String word : Util.getBibleWords()) {
-                    if(word.equals(fixed)) counter++;
-                }
-
-                counts.put(fixed, counter);
-            }
+        for (String word : Util.getBibleWords()) {
+            if(counts.get(word) == null)
+                counts.put(word, 1);
+            else
+                counts.put(word, counts.get(word) + 1);
         }
     }
 
@@ -24,7 +19,6 @@ public class BibleAnalyzer {
         for (String word : words) {
             System.out.println(map.get(word) + " " + word);
         }
-
     }
 
     public static void sort(String[] words, Map<String, Integer> counts) {
