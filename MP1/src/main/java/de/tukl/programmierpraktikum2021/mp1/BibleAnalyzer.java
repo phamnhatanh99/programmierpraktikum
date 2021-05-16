@@ -9,6 +9,7 @@ public class BibleAnalyzer {
                 for (String word : Util.getBibleWords()) {
                     if(word.equals(fixed)) counter++;
                 }
+
                 counts.put(fixed, counter);
             }
         }
@@ -16,11 +17,12 @@ public class BibleAnalyzer {
 
     public static void main(String[] args) {
         Map<String, Integer> map = new ListMap<>();
+        countWords(map);
         String[] words = new String[map.size()];
         map.keys(words);
         // Sort words TODO
         for (String word : words) {
-            System.out.println(map.get(word) + " " + word + "\n");
+            System.out.println(map.get(word) + " " + word);
         }
 
     }
