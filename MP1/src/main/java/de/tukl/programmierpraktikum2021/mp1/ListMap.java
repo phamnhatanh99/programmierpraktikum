@@ -9,13 +9,11 @@ public class ListMap<K, V> implements Map<K, V>{
 
 
     public V get(K key) {
-
         ListElement<K,V> list2= list;
         if (list2 == null) return null;
         while (list2.getNext()!= null){
             if (list2.getKey() == key) return list2.getValue();
             else list2 = list2.getNext();
-
         }
         if (list2.getKey() == key) return list2.getValue();
         return null;
@@ -48,7 +46,6 @@ public class ListMap<K, V> implements Map<K, V>{
 
     @Override
     public void remove(K key) {
-
         ListElement<K,V> list2 = list;
         ListElement<K,V> list3 = null;
         if (list2 == null){
@@ -68,23 +65,26 @@ public class ListMap<K, V> implements Map<K, V>{
             list3 = list;
         }
 
-         else if (list2.getKey() == key && list2.getNext() == null) {
+        else if (list2.getKey() == key && list2.getNext() == null) {
             if (list3 == null) list3 = list2.getNext();
             else list3.setNext(null);
         }
         else if  (list2.getKey() == key && list2.getNext() != null) {
-            System.out.println("da");
+
             if (list3 == null) {
                 list3 = list2.getNext();
             }
-            else list3.setNext(list2.getNext());
+            else {
+                list3.setNext(list3.getNext());
+            }
         }
         else if (list2 == null)
-        list3.setNext(null);
+            list3.setNext(null);
         list = list3;
+
     }
 
-    @Override
+        @Override
     public int size() {
         int counter = 0;
         ListElement<K,V> list2 = list;
