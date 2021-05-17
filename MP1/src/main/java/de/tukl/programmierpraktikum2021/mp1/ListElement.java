@@ -11,6 +11,7 @@ public class ListElement<K, V> {
         this.pointer = null;
     }
 
+
     public void setKey(K key){
         this.key = key;
     }
@@ -31,21 +32,18 @@ public class ListElement<K, V> {
         this.pointer = next;
     }
 
-    public ListElement getNext() {
+    public ListElement<K,V> getNext() {
         return pointer;
     }
-
-    public ListElement getLastElem() {
-        ListElement<K,V> self = pointer ;
-        if (self == null) {
-            System.out.println(self);
-            return self;
-
+    public ListElement<K,V> getLast(){
+        ListElement last = this;
+        while (last.getNext() != null){
+            last = last.getNext();
         }
-        while(self.getNext() != null){
-            System.out.println(self.getNext());
-            self = self.getNext();
-        }
-        return self;
+        return last;
     }
 }
+
+
+
+
