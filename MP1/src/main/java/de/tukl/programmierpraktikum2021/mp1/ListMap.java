@@ -83,9 +83,10 @@ public class ListMap<K, V> implements Map<K, V> {
     @Override
     public void keys(K[] array) {
         ListElement<K, V> list1 = list;
-        if (this.size() < array.length) {
-            throw new IllegalArgumentException();
-        }
+        System.out.println(this.size());
+        System.out.println(array);
+        if (array == null) throw new IllegalArgumentException();
+        if (this.size() > array.length) throw new IllegalArgumentException();
         int i = 0;
         while (list1 != null) {
             array[i] = (K) list1.getKey();
