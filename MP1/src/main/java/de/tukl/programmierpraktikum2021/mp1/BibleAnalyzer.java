@@ -23,6 +23,9 @@ public class BibleAnalyzer {
 
     /**
      * Sorts an array using Heap Sort
+     *
+     * Reference
+     * https://www.geeksforgeeks.org/heap-sort/
      **/
     public static void sort(String[] words, Map<String, Integer> counts) {
         int n = words.length - 1;
