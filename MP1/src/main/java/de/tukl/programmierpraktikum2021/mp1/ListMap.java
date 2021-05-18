@@ -21,20 +21,22 @@ public class ListMap<K, V> implements Map<K, V> {
 
     @Override
     public void put(K key, V value) {
-        ListElement<K, V> momentan = list;
-        if (momentan == null) list = new ListElement<>(key, value);
+        ListElement<K, V> current = list;
+        if (current == null) list = new ListElement<>(key, value);
         else {
-            while (momentan.getNext() != null) {
-                if (momentan.getKey() != key) {
-                    momentan = momentan.getNext();
+            while (current.getNext() != null) {
+                if (current.getKey() != key) {
+                    current = current.getNext();
                 } else {
                     break;
                 }
             }
-            if (momentan.getKey() == key) {
+            if (current.getKey() == key) {
                 if (list == null) list = new ListElement<K, V>(key, value);
                 else {
-                    momentan.setValue(value);
+                    System.out.println(current.getValue());
+                    current.setValue(value);
+                    System.out.println(current.getValue());
                 }
             } else list.getLast().setNext(new ListElement(key, value));
         }
@@ -61,7 +63,6 @@ public class ListMap<K, V> implements Map<K, V> {
                     break;
                 }
             }
-
             if (list2.getKey() == key) {
                 list = list3;
             }
