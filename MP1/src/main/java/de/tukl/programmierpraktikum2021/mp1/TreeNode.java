@@ -1,15 +1,27 @@
 package de.tukl.programmierpraktikum2021.mp1;
-import java.util.*;
 
+// Node class for TrieMap
 public class TreeNode<V> {
-    //Node class
-    String key;
     V value;
-    List<TreeNode<V>> children;
+    final LibraryMap<Character, TreeNode<V>> children = new LibraryMap<>();
 
-    public TreeNode(String key, V value) {
-        this.key = key;
+    public TreeNode(V value) {
         this.value = value;
-        this.children = new ArrayList<>();
+    }
+
+    public V getValue() {
+        return this.value;
+    }
+
+    public void setValue(V value) {
+        this.value = value;
+    }
+
+    public TreeNode<V> getChild(Character node_key) {
+        return children.get(node_key);
+    }
+
+    public void addChild(Character node_key, TreeNode<V> node) {
+        children.put(node_key, node);
     }
 }
