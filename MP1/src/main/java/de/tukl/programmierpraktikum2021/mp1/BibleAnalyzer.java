@@ -11,7 +11,7 @@ public class BibleAnalyzer {
     }
 
     public static void main(String[] args) {
-        Map<String, Integer> map = new ListMap<>();
+        Map<String, Integer> map = new TrieMap<>();
         countWords(map);
         String[] words = new String[map.size()];
         map.keys(words);
