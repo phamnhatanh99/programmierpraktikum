@@ -1,7 +1,5 @@
 package de.tukl.programmierpraktikum2021.mp1;
 
-import java.util.ArrayList;
-
 public class ListMap<K, V> implements Map<K, V> {
     private K key;
     private V value;
@@ -11,11 +9,19 @@ public class ListMap<K, V> implements Map<K, V> {
     public V get(K key) {
         ListElement<K, V> list2 = list;
         if (list2 == null) return null;
+
         while (list2.getNext() != null) {
-            if (list2.getKey() == key) return list2.getValue();
-            else list2 = list2.getNext();
+
+            if (list2.getKey().equals(key) || list2.getKey() == key) {
+                return list2.getValue();
+            }
+            else {
+                list2 = list2.getNext();
+            }
         }
-        if (list2.getKey() == key) return list2.getValue();
+        if (list2.getKey().equals(key) || list2.getKey() == key) {
+            return list2.getValue();
+        }
         return null;
     }
 
@@ -25,20 +31,21 @@ public class ListMap<K, V> implements Map<K, V> {
         if (current == null) list = new ListElement<>(key, value);
         else {
             while (current.getNext() != null) {
-                if (current.getKey() != key) {
-                    current = current.getNext();
-                } else {
+                if (current.getKey().equals(key) || current.getKey() == key) {
                     break;
+                } else {
+                    current = current.getNext();
+
                 }
             }
-            if (current.getKey() == key) {
+            if (current.getKey().equals(key) || current.getKey() == key) {
                 if (list == null) list = new ListElement<K, V>(key, value);
                 else {
                     System.out.println(current.getValue());
                     current.setValue(value);
                     System.out.println(current.getValue());
                 }
-            } else list.getLast().setNext(new ListElement(key, value));
+            } else list.getLast().setNext(new ListElement<>(key, value));
         }
     }
 
@@ -52,7 +59,7 @@ public class ListMap<K, V> implements Map<K, V> {
             while (list2.getNext() != null) {
                 if (list2.getKey() != key) {
                     if (list3 == null) list3 = new ListElement<>(list2.getKey(), list2.getValue());
-                    else list3.getLast().setNext(new ListElement(list2.getKey(), list2.getValue()));
+                    else list3.getLast().setNext(new ListElement<>(list2.getKey(), list2.getValue()));
                     list2 = list2.getNext();
                 } else {
                     if (list3 == null && list2.getNext() != null) {

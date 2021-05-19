@@ -14,5 +14,5 @@ Team
 Betreuung
 ---------
 
-- Tutor: wird noch bekannt gegeben
+- Tutor: Aaron Hackenberg <a_hackenbe17@cs.uni-kl.de>
 - Zeitslot für Abnahmen: wird noch bekannt gegeben
