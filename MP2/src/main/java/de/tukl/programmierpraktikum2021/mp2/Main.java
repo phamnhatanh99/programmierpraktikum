@@ -4,15 +4,21 @@ import java.util.*; // Noch vor der Klassendefinition importieren
 
 public class Main {
     public static void main(String[] args) {
+        KwicImpl kwicimpl = new KwicImpl();
+        for (Book book: Util.books){
+            kwicimpl.add(book);
+        }
         System.out.println("Please enter a search term! \n search term:");
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
-        Book match = new Book("ALive", "Fabian",2001);
-        if (match == null){
+        List<Book> matches = kwicimpl.search(input);
+        if (matches == null){
             System.out.println("Sorry, no match found for "+ input + ".");
         }
         else{
-            System.out.println("Author: "+match.getAuthor()+"\nTitle: "+match.getTitle()+"\nYear: "+match.getYear());
+            for (Book match :matches) {
+                System.out.println("Author: " + match.getAuthor() + "\nTitle: " + match.getTitle() + "\nYear: " + match.getYear());
+            }
         }
     }
 }
