@@ -16,3 +16,4 @@ Betreuung
 
 - Tutor: Aaron Hackenberg <a_hackenbe17@cs.uni-kl.de>
 - Zeitslot für Abnahmen: Mi 11:45-12:30
+- Link für die Abnahme: https://bbb.rlp.net/b/hac-fyt-tf0-7wc
