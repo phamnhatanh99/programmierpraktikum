@@ -1,10 +1,8 @@
 package de.tukl.programmierpraktikum2021.mp1;
-import java.util.*;
-
 public class TrieMap<V> implements Map<String, V> {
 
     private final TreeNode<V> root = new TreeNode<>(null);               // Root node of the tree
-    private final List<String> keys = new ArrayList<>();                       // List to store keys of the map
+    private final ListMap<String, String> keys = new ListMap<>();              // List to store keys of the map
 
     @Override
     public V get(String key) {
@@ -29,7 +27,7 @@ public class TrieMap<V> implements Map<String, V> {
     @Override
     public void put(String key, V value) {
         if (get(key) == null)   // If there is currently no node with this key, add key to the key list.
-            keys.add(key);
+            keys.put(key, key);
         put(root, key, value);
     }
 
@@ -81,9 +79,6 @@ public class TrieMap<V> implements Map<String, V> {
     public void keys(String[] array) throws IllegalArgumentException {
         if (array == null || size() > array.length)
             throw new IllegalArgumentException();
-        int i = 0;
-        for (String k: keys) {
-            array[i++] = k;
-        }
+        keys.keys(array);
     }
 }

@@ -2,8 +2,8 @@ package de.tukl.programmierpraktikum2021.mp1;
 
 // Node class for TrieMap
 public class TreeNode<V> {
-    V value;
-    final ListMap<Character, TreeNode<V>> children = new ListMap<>();
+    private V value;
+    private final ListMap<Character, TreeNode<V>> children = new ListMap<>();
 
     public TreeNode(V value) {
         this.value = value;
