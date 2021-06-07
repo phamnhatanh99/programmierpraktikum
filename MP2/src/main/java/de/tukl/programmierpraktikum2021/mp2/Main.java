@@ -17,7 +17,10 @@ public class Main {
         }
         else{
             for (Book match :matches) {
-                System.out.println("Author: " + match.author + "\nTitle: " + match.title + "\nYear: " + match.year);
+                for (Book book: Util.books) {
+                        if (match.getTitle().equals(book.getTitle()))
+                            System.out.println("Autor: " + book.author + ". Titel: " + book.title + ". Jahr: " + book.year);
+                    }
             }
         }
     }
