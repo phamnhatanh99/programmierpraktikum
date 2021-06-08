@@ -25,3 +25,17 @@ MP2:
   rules:
     - changes:
       - MP2/**/*
+
+P1:
+  image: openjdk:11
+  script:
+    - cd P1
+    - ./gradlew test
+  artifacts:
+    paths:
+      - P1/build/reports
+    when: always
+    expire_in: 2 weeks
+  rules:
+    - changes:
+      - P1/**/*
