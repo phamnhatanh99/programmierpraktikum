@@ -20,7 +20,7 @@ public class KwicImpl implements Kwic{
 
         for (int i = 0; i < words.length; i++) {
             word = rotate(word);
-            books.put(word.toLowerCase(), new Book(word, book.author, book.year));
+            books.put(word.toLowerCase(), book);
         }
         for (String term: Util.exceptions) {
             Iterable<KeyValuePair<Book>> res = books.searchKeyPrefix( term.toLowerCase() + " ");

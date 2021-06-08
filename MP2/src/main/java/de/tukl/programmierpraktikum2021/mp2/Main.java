@@ -18,7 +18,7 @@ public class Main {
         else{
             for (Book match :matches) {
                 for (Book book: Util.books) {
-                        if (match.getTitle().equals(book.getTitle()))
+                        if (match.title.equals(book.title))
                             System.out.println("Autor: " + book.author + ". Titel: " + book.title + ". Jahr: " + book.year);
                     }
             }
