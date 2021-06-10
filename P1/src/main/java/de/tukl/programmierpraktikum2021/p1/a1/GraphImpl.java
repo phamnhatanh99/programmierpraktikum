@@ -3,8 +3,8 @@ package de.tukl.programmierpraktikum2021.p1.a1;
 import java.util.*;
 
 public class GraphImpl implements Graph {
-    public Map<String, Object> nodes = new HashMap<>();
-    public ArrayList<ArrayList<String>> edges = new ArrayList();
+    private Map<String, Object> nodes = new HashMap<>();
+    private ArrayList<ArrayList<String>> edges = new ArrayList();
     //private Exception InvalidNodeException;
 
     @Override
