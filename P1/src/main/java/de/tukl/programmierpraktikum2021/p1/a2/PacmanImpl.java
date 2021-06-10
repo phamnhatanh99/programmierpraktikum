@@ -21,18 +21,20 @@ public class PacmanImpl implements Pacman {
             g.addNode(virtualPackage, u.getVersion(virtualPackage));
         }
         for (String node : g.getNodeIds()) {
-            for (String dependence : u.getDependencies(node)) {
-                try {
-                    g.addEdge(node, dependence);
-                } catch (Exception e) {
-                    break;
+            if (u.getDependencies(node) != null) {
+                for (String dependence : u.getDependencies(node)) {
+                    try {
+                        g.addEdge(node, dependence);
+                    }
+                    catch (Exception ignored) {}
                 }
             }
-            for (String virtualPackage : u.getVirtual(node)) {
-                try {
-                    g.addEdge(node, virtualPackage);
-                } catch (Exception e) {
-                    break;
+            if (u.getVirtual(node) != null) {
+                for (String virtualPackage : u.getVirtual(node)) {
+                    try {
+                        g.addEdge(node, virtualPackage);
+                    }
+                    catch (Exception ignored){}
                 }
             }
         }
