@@ -9,16 +9,18 @@ import java.util.List;
 import java.util.Set;
 
 public class PacmanImpl implements Pacman {
-
+    GraphImpl g = new GraphImpl();
+    
     @Override
     public void buildDependencyGraph() throws IOException {
         Util u = new Util();
-        GraphImpl g = new GraphImpl();
         for (String normalPackage : u.getAllNormalPackages()) {
-            g.addNode(normalPackage, u.getVersion(normalPackage));
+            NormalPackage pack = new NormalPackage(normalPackage, u.getVersion(normalPackage));
+            g.addNode(normalPackage, pack);
         }
         for (String virtualPackage : u.getAllVirtualPackages()) {
-            g.addNode(virtualPackage, u.getVersion(virtualPackage));
+            NormalPackage pack = new NormalPackage(virtualPackage, u.getVersion(virtualPackage));
+            g.addNode(virtualPackage, pack);
         }
         for (String node : g.getNodeIds()) {
             if (u.getDependencies(node) != null) {
