@@ -2,25 +2,25 @@ package de.tukl.programmierpraktikum2021.p1.a1;
 
 import java.util.*;
 
-public class GraphImpl implements Graph {
-    private Map<String, Object> nodes = new HashMap<>();
-    private ArrayList<ArrayList<String>> edges = new ArrayList();
+public class GraphImpl<D> implements Graph<D> {
+    private final Map<String, D> nodes = new HashMap<>();
+    private final ArrayList<ArrayList<String>> edges = new ArrayList<>();
     //private Exception InvalidNodeException;
 
     @Override
-    public void addNode(String name, Object data) {
+    public void addNode(String name, D data) {
         nodes.put(name, data);
     }
 
     @Override
-    public Object getData(String nodeId) throws InvalidNodeException {
-        Object data = nodes.get(nodeId);
+    public D getData(String nodeId) throws InvalidNodeException {
+        D data = nodes.get(nodeId);
         if (data == null) throw new InvalidNodeException(nodeId);
         else return data;
     }
 
     @Override
-    public void setData(String nodeId, Object data) throws InvalidNodeException {
+    public void setData(String nodeId, D data) throws InvalidNodeException {
         if (nodes.containsKey(nodeId)) nodes.put(nodeId, data);
         else throw new InvalidNodeException(nodeId);
     }
