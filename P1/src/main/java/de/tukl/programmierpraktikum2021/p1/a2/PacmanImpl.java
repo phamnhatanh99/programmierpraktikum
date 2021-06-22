@@ -26,7 +26,7 @@ public class PacmanImpl implements Pacman {
             if (u.getDependencies(node) != null) {
                 for (String dependence : u.getDependencies(node)) {
                     try {
-                        g.addEdge(node, dependence);
+                        g.addEdge(dependence ,node);
                     }
                     catch (Exception ignored) {}
                 }
@@ -34,7 +34,7 @@ public class PacmanImpl implements Pacman {
             if (u.getVirtual(node) != null) {
                 for (String virtualPackage : u.getVirtual(node)) {
                     try {
-                        g.addEdge(node, virtualPackage);
+                        g.addEdge(virtualPackage, node);
                     }
                     catch (Exception ignored){}
                 }
