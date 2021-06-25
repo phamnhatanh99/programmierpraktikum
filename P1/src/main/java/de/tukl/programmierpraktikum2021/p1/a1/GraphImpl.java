@@ -1,5 +1,4 @@
 package de.tukl.programmierpraktikum2021.p1.a1;
-
 import java.util.*;
 
 public class GraphImpl<D> implements Graph<D> {
@@ -14,15 +13,14 @@ public class GraphImpl<D> implements Graph<D> {
 
     @Override
     public D getData(String nodeId) throws InvalidNodeException {
-        D data = nodes.get(nodeId);
-        if (data == null) throw new InvalidNodeException(nodeId);
-        else return data;
+        if (!nodes.containsKey(nodeId)) throw new InvalidNodeException(nodeId);
+        return nodes.get(nodeId);
     }
 
     @Override
     public void setData(String nodeId, D data) throws InvalidNodeException {
-        if (nodes.containsKey(nodeId)) nodes.put(nodeId, data);
-        else throw new InvalidNodeException(nodeId);
+        if (!nodes.containsKey(nodeId)) throw new InvalidNodeException(nodeId);
+        nodes.put(nodeId, data);
     }
 
     @Override
