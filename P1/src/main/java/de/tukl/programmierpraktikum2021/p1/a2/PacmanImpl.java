@@ -59,31 +59,17 @@ public class PacmanImpl implements Pacman {
 
     @Override
     public String transitiveDependencies(String pkg) throws InvalidNodeException {
-        StringBuilder res = new StringBuilder(pkg + "\n");
-        Set<String> pkgs = g.getOutgoingNeighbors(pkg);
-        for(String item : pkgs){
-            res.append("|___").append(listPackages(item, 1));
-        }
-        System.out.println(res);
-        return res.toString();
+        return listPackages(pkg,"", 1);
     }
 
-    private String listPackages(String pkg , int counter) throws InvalidNodeException {
-        Set<String> pkgs = g.getOutgoingNeighbors(pkg);
-        StringBuilder res = new StringBuilder(pkg + "\n");
-        for(String item : pkgs){
-             res.append(depth(counter)).append("|___").append(listPackages(item, counter + 1));
+    private String listPackages(String pkg ,String indent, int depth) throws InvalidNodeException {
+        StringBuilder res = new StringBuilder(g.getData(pkg) + "\n");
+        Iterator<String> pkgs = g.getOutgoingNeighbors(pkg).iterator();
+
+        while(pkgs.hasNext()){
+            res.append(indent).append("|___").append(listPackages(pkgs.next(),indent + (pkgs.hasNext()? "|   ":"    "), depth + 1));
         }
         return res.toString();
-    }
-
-    private String depth(int count) throws InvalidNodeException {
-        String res = "";
-        String tab = "    ";
-        for (int i = 0; i < count; i++) {
-            res += tab;
-        }
-        return res;
     }
 
     /* Run through the dependency graph of Package pkg Level by Level (Level-Order-Traversal)
