@@ -59,7 +59,17 @@ public class PacmanImpl implements Pacman {
 
     @Override
     public String transitiveDependencies(String pkg) throws InvalidNodeException {
-        return null;
+        return listPackages(pkg,"", 1);
+    }
+
+    private String listPackages(String pkg ,String indent, int depth) throws InvalidNodeException {
+        StringBuilder res = new StringBuilder(g.getData(pkg) + "\n");
+        Iterator<String> pkgs = g.getOutgoingNeighbors(pkg).iterator();
+
+        while(pkgs.hasNext()){
+            res.append(indent).append("|___").append(listPackages(pkgs.next(),indent + (pkgs.hasNext()? "|   ":"    "), depth + 1));
+        }
+        return res.toString();
     }
 
     /* Run through the dependency graph of Package pkg Level by Level (Level-Order-Traversal)
