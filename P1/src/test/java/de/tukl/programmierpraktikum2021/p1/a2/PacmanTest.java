@@ -63,7 +63,9 @@ public class PacmanTest {
         for (Package p : res1) {
             res2.add(p.getName());
         }
+
         assertTrue(res2.containsAll(Arrays.asList("linux-api-headers", "tzdata", "filesystem")));
+        assertEquals(4, res1.size());
 
         assertThrows(InvalidNodeException.class, () -> pacman.buildInstallList("coincard"));
     }
