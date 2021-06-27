@@ -21,14 +21,19 @@ public class PacmanImpl implements Pacman {
 
         //Adding virtual packages and their dependencies to the provider packages
         for (String providerPackage : u.getAllVirtualPackages()) {
+            // Util bug (returns all packages) so we have to do null check
             if (u.getVirtual(providerPackage) != null) {
                 for (String virtualPackage : u.getVirtual(providerPackage)) {
-                    VirtualPackage pack = new VirtualPackage(virtualPackage, u.getVersion(virtualPackage), providerPackage);
+                    // Check if virtual package has version embedded in name. If yes then take that as its version else
+                    // take the version of the provider package
+                    String name = virtualPackage.substring(0, virtualPackage.contains("=") ? virtualPackage.indexOf("=") : virtualPackage.length());
+                    String version = virtualPackage.contains("=") ? virtualPackage.substring(virtualPackage.indexOf("=") + 1) : u.getVersion(providerPackage);
+                    VirtualPackage pack = new VirtualPackage(name, version, providerPackage);
                     g.addNode(virtualPackage, pack);
                     try {
                         g.addEdge(virtualPackage, providerPackage);
                     }
-                    catch (Exception ignored) {}
+                    catch (Exception ignored) {} // Skip if edge already exists
                 }
             }
         }
@@ -37,16 +42,18 @@ public class PacmanImpl implements Pacman {
         for (String node : g.getNodeIds()) {
             if (u.getDependencies(node) != null) {
                 for (String dependence : u.getDependencies(node)) {
+                    // Check if the name of dependencies contains ">", then we have to remove the part after that
+                    // so we don't get InvalidNodeException
                     if (!dependence.contains(">")) {
                         try {
                             g.addEdge(node, dependence);
                         }
-                        catch (Exception ignored) {}
+                        catch (Exception ignored) {} // Skip if edge already exists
                     }
                     else try {
                         g.addEdge(node, dependence.substring(0, dependence.indexOf(">")));
                     }
-                    catch (Exception ignored) {}
+                    catch (Exception ignored) {} // Skip if edge already exists
                 }
             }
         }
@@ -59,15 +66,15 @@ public class PacmanImpl implements Pacman {
 
     @Override
     public String transitiveDependencies(String pkg) throws InvalidNodeException {
-        return listPackages(pkg,"", 1);
+        return listPackages(pkg,"");
     }
 
-    private String listPackages(String pkg ,String indent, int depth) throws InvalidNodeException {
+    private String listPackages(String pkg ,String indent) throws InvalidNodeException {
         StringBuilder res = new StringBuilder(g.getData(pkg) + "\n");
         Iterator<String> pkgs = g.getOutgoingNeighbors(pkg).iterator();
 
         while(pkgs.hasNext()){
-            res.append(indent).append("|___").append(listPackages(pkgs.next(),indent + (pkgs.hasNext()? "|   ":"    "), depth + 1));
+            res.append(indent).append("|___").append(listPackages(pkgs.next(),indent + (pkgs.hasNext()? "|   ":"    ")));
         }
         return res.toString();
     }

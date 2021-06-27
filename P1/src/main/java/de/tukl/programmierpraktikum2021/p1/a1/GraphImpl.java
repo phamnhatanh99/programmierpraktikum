@@ -4,7 +4,6 @@ import java.util.*;
 public class GraphImpl<D> implements Graph<D> {
     private final Map<String, D> nodes = new HashMap<>();
     private final ArrayList<ArrayList<String>> edges = new ArrayList<>();
-    //private Exception InvalidNodeException;
 
     @Override
     public void addNode(String name, D data) {
@@ -65,8 +64,11 @@ public class GraphImpl<D> implements Graph<D> {
             }
         }
         return outgoingNeighbors;
-
     }
 
+    @Override
+    public String toString() {
+        return "Nodes: " + nodes + "\nEdges: " + edges;
+    }
 }
 

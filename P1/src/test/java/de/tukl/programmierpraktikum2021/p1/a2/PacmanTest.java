@@ -6,6 +6,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PacmanTest {
+
+    public int countOccurrences (String str, String word) {
+        int count = 0;
+        if (!str.isEmpty() && !word.isEmpty()) {
+            for (int i = 0; (i = str.indexOf(word, i)) != -1; i += word.length()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     @Test
     public void testDependencyGraph() throws IOException, InvalidNodeException {
         Pacman pacman = new PacmanImpl();
@@ -28,12 +39,15 @@ public class PacmanTest {
         assertThrows(InvalidNodeException.class, () -> pacman.transitiveDependencies("coincard"));
 
         String res = pacman.transitiveDependencies("sqlite");
+        System.out.println(res);
         assertTrue(res.contains("sqlite-3.35.5-1"));
-        assertTrue(res.contains("glibc-2.33-5"));
         assertTrue(res.contains("linux-api-headers-5.12.3-1"));
         assertTrue(res.contains("tzdata-2021a-1"));
         assertTrue(res.contains("filesystem-2021.05.31-1"));
         assertTrue(res.contains("ncurses provides libncursesw.so-6-64"));
+        assertEquals(6, countOccurrences(res, "glibc-2.33-5"));
+        assertEquals(1, countOccurrences(res, "provides"));
+        assertEquals(4, countOccurrences(res, "ncurses"));
     }
 
     @Test
