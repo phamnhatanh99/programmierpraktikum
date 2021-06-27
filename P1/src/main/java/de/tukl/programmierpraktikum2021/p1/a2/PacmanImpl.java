@@ -69,7 +69,7 @@ public class PacmanImpl implements Pacman {
         return listPackages(pkg,"");
     }
 
-    private String listPackages(String pkg ,String indent) throws InvalidNodeException {
+    private String listPackages(String pkg, String indent) throws InvalidNodeException {
         StringBuilder res = new StringBuilder(g.getData(pkg) + "\n");
         Iterator<String> pkgs = g.getOutgoingNeighbors(pkg).iterator();
 
