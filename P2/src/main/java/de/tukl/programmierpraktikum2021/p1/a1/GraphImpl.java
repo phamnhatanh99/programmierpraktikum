@@ -2,8 +2,8 @@ package de.tukl.programmierpraktikum2021.p1.a1;
 import java.util.*;
 
 public class GraphImpl<D> implements Graph<D> {
-    protected final Map<String, D> nodes = new HashMap<>();
-    protected final ArrayList<ArrayList<String>> edges = new ArrayList<>();
+    protected HashMap<String, D> nodes = new HashMap<>();
+    protected ArrayList<ArrayList<String>> edges = new ArrayList<>();
 
     @Override
     public void addNode(String name, D data) {
