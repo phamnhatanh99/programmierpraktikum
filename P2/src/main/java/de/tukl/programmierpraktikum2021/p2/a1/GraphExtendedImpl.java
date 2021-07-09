@@ -22,8 +22,7 @@ public class GraphExtendedImpl<D> extends GraphImpl<D> implements GraphExtended<
         if (nodes.isEmpty()) return false;
 
         // Run topological sorting algorithm, return false if there is a topological sorting
-        ArrayList<ArrayList<String>> clonedEdges = topologicalSorting();
-        return !clonedEdges.isEmpty();
+        return !topologicalSorting().isEmpty();
     }
 
     // When the graph is seen as a flow of work. This algorithm tries to create a list of nodes sorted in
