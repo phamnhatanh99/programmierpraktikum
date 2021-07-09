@@ -87,7 +87,7 @@ public class PacmanImpl implements Pacman {
      * Add the direct dependencies in the NameSet, these dependencies then become next level
      * Repeat till there's no dependency left aka. level is empty
      * Compare NameSet with Installed List to removed already installed packages
-     * Fetch the packages in NameSet into installList in reverse order. Return this list of packages.
+     * Fetch the packages in NameSet into installList in reverse orderc. Return this list of packages.
      * */
     @Override
     public List<Package> buildInstallList(String pkg) throws InvalidNodeException {
