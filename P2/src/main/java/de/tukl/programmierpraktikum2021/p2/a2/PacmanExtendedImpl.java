@@ -2,7 +2,7 @@ package de.tukl.programmierpraktikum2021.p2.a2;
 import de.tukl.programmierpraktikum2021.p1.a1.InvalidNodeException;
 import de.tukl.programmierpraktikum2021.p1.a2.*;
 import de.tukl.programmierpraktikum2021.p1.a2.Package;
-import de.tukl.programmierpraktikum2021.p2.a1.GraphExtendedImpl;
+
 
 import java.io.IOException;
 import java.util.*;
@@ -18,9 +18,7 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
     public Set<String> getInstalledExplicitly() {
         return explicitlyInstalled;
     }
-    public Set<String> getCyc(){
-        return g.getCycles();
-    }
+
     @Override
     public List<Package> buildInstallList(String pkg) throws InvalidNodeException {
         List<Package> installList = new ArrayList<>();
@@ -47,7 +45,9 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             level.clear();
             level.addAll(directDependencies);
             level.removeAll(installNameSet);
+           //System.out.println("level: "+level);
             installNameSet.addAll(directDependencies);
+            //System.out.println("NameSet: "+installNameSet);
 
         }
 
@@ -65,57 +65,38 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
      * Names of installed package are stored in the list "install"
      * */
     @Override
-    public void install(String pkg) throws InvalidNodeException, IOException, ConflictException, CyclicDependencyException {
+    public void install(String pkg) throws InvalidNodeException, IOException, ConflictException{
         Util u = new Util("./src/main/resources/core-cycle.db.zip");
         List<Package> toInstall = buildInstallList(pkg);
-        GraphExtendedImpl<Package> pkgGraph = new GraphExtendedImpl<>();
-        List<Package> pkgBuild = new ArrayList<>();
-        NormalPackage pack1= new NormalPackage(pkg,u.getVersion(pkg));
+        Set<String> pkgTreeNodes = new HashSet<>();
         //Build the set of nodes that are in dependency tree of pkg
-        pkgBuild.add(pack1);
-        pkgBuild.addAll(toInstall);
+        pkgTreeNodes.add(pkg);
+        for (Package p : toInstall) {
+            pkgTreeNodes.add(p.getName());
+        }
         // Check if conflicted
-        boolean conflicted = false;
-        for(Package pack: pkgBuild){
-            for(String conf:u.getConflicts(pack.getName())){
-                if (installed.contains(conf)){
-                    conflicted = true;
-                    throw new ConflictException(pack.getName());
+
+        for(String pack: pkgTreeNodes){
+            if(u.getConflicts(pack)!=null){
+                for(String conf:u.getConflicts(pack)){
+                    if (installed.contains(conf)){
+                        throw new ConflictException(pack);
+                    }
                 }
             }
         }
 
-        //Check for Cycle
-        //Build dependency tree for pkg
-        for (Package p: pkgBuild){
-            if(u.getDependencies(p.getName())!=null){
-                for (String dependence : u.getDependencies(p.getName())) {
-                    // Check if the name of dependencies contains ">", then we have to remove the part after that
-                    // so we don't get InvalidNodeException
-                    if (!dependence.contains(">")) {
-                        try {
-                            pkgGraph.addEdge(p.getName(), dependence);
-                        }
-                        catch (Exception ignored) {} // Skip if edge already exists
-                    }
-                    else try {
-                        pkgGraph.addEdge(p.getName(), dependence.substring(0, dependence.indexOf(">")));
-                    }
-                    catch (Exception ignored) {} // Skip if edge already exists
-                }
-            }
-        }
-        Set<String> cycle = pkgGraph.getCycles();
+
+        Set<String> dbCycle = g.getCycles();
+        Set<String> cycle = new HashSet<>(pkgTreeNodes);
+        cycle.retainAll(dbCycle);
         if(!cycle.isEmpty()){
             String cycleString = String.join(",", cycle);
-            System.out.println(cycleString+"formed cyclic dependency!");
+            System.out.println(cycleString+" formed cyclic dependency!");
         }
         //Install
         installed.remove(pkg); //remove old version
-        for (Package p : toInstall) {
-            installed.add(p.getName());
-        }
-        installed.add(pkg);
+        installed.addAll(pkgTreeNodes);
         explicitlyInstalled.add(pkg);
 
 

@@ -1,5 +1,4 @@
 package de.tukl.programmierpraktikum2021.p1.a2;
-import de.tukl.programmierpraktikum2021.p1.a1.GraphImpl;
 import de.tukl.programmierpraktikum2021.p1.a1.InvalidNodeException;
 import de.tukl.programmierpraktikum2021.p2.a1.GraphExtendedImpl;
 
@@ -23,20 +22,17 @@ public class PacmanImpl implements Pacman {
 
         //Adding virtual packages and their dependencies to the provider packages
         for (String providerPackage : u.getAllVirtualPackages()) {
-            // Util bug (returns all packages) so we have to do null check
-            if (u.getVirtual(providerPackage) != null) {
-                for (String virtualPackage : u.getVirtual(providerPackage)) {
-                    // Check if virtual package has version embedded in name. If yes then take that as its version else
-                    // take the version of the provider package
-                    String name = virtualPackage.substring(0, virtualPackage.contains("=") ? virtualPackage.indexOf("=") : virtualPackage.length());
-                    String version = virtualPackage.contains("=") ? virtualPackage.substring(virtualPackage.indexOf("=") + 1) : u.getVersion(providerPackage);
-                    VirtualPackage pack = new VirtualPackage(name, version, providerPackage);
-                    g.addNode(virtualPackage, pack);
-                    try {
-                        g.addEdge(virtualPackage, providerPackage);
-                    }
-                    catch (Exception ignored) {} // Skip if edge already exists
+            for (String virtualPackage : u.getVirtual(providerPackage)) {
+                // Check if virtual package has version embedded in name. If yes then take that as its version else
+                // take the version of the provider package
+                String name = virtualPackage.substring(0, virtualPackage.contains("=") ? virtualPackage.indexOf("=") : virtualPackage.length());
+                String version = virtualPackage.contains("=") ? virtualPackage.substring(virtualPackage.indexOf("=") + 1) : u.getVersion(providerPackage);
+                VirtualPackage pack = new VirtualPackage(name, version, providerPackage);
+                g.addNode(virtualPackage, pack);
+                try {
+                    g.addEdge(virtualPackage, providerPackage);
                 }
+                catch (Exception ignored) {} // Skip if edge already exists
             }
         }
 
@@ -59,7 +55,7 @@ public class PacmanImpl implements Pacman {
                 }
             }
         }
-    System.out.println(g);
+    //System.out.println(g);
     }
 
     @Override
@@ -127,7 +123,7 @@ public class PacmanImpl implements Pacman {
      * Names of installed package are stored in the list "install"
      * */
     @Override
-    public void install(String pkg) throws InvalidNodeException,IOException,ConflictException,CyclicDependencyException {
+    public void install(String pkg) throws InvalidNodeException,IOException,ConflictException {
         installed.remove(pkg);
         List<Package> toInstall = buildInstallList(pkg);
         for (Package p : toInstall) {
