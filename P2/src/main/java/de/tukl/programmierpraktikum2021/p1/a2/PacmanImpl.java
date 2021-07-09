@@ -7,12 +7,13 @@ import java.io.IOException;
 import java.util.*;
 
 public class PacmanImpl implements Pacman {
-    protected final GraphImpl<Package> g = new GraphExtendedImpl<>();
+    protected final GraphExtendedImpl<Package> g = new GraphExtendedImpl<>();
     protected final Set<String> installed = new HashSet<>();
+    protected final Set<String> explicitlyInstalled = new HashSet<>();
 
     @Override
     public void buildDependencyGraph() throws IOException {
-        Util u = new Util("./src/main/resources/core.db.zip");
+        Util u = new Util("./src/main/resources/core-cycle.db.zip");
 
         //Adding normal packages
         for (String normalPackage : u.getAllNormalPackages()) {
@@ -58,6 +59,7 @@ public class PacmanImpl implements Pacman {
                 }
             }
         }
+    System.out.println(g);
     }
 
     @Override
@@ -125,7 +127,7 @@ public class PacmanImpl implements Pacman {
      * Names of installed package are stored in the list "install"
      * */
     @Override
-    public void install(String pkg) throws InvalidNodeException {
+    public void install(String pkg) throws InvalidNodeException,IOException,ConflictException,CyclicDependencyException {
         installed.remove(pkg);
         List<Package> toInstall = buildInstallList(pkg);
         for (Package p : toInstall) {
@@ -133,6 +135,5 @@ public class PacmanImpl implements Pacman {
         }
         installed.add(pkg);
     }
-
 }
 

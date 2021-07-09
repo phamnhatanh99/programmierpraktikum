@@ -54,5 +54,5 @@ public interface Pacman {
      * @param pkg The name of the package that should be installed.
      * @throws InvalidNodeException If a package is not contained in the dependency graph
      */
-    void install(String pkg) throws InvalidNodeException;
+    void install(String pkg) throws InvalidNodeException, IOException, ConflictException,CyclicDependencyException;
 }

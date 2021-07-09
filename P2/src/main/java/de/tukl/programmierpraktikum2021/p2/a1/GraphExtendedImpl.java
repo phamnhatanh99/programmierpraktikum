@@ -18,6 +18,14 @@ public class GraphExtendedImpl<D> extends GraphImpl<D> implements GraphExtended<
         // An empty graph is acyclic
         if (nodes.isEmpty()) return false;
 
+        // Run topological sorting algorithm, return false if there is a topological sorting
+        return !topologicalSorting().isEmpty();
+    }
+
+    // When the graph is seen as a flow of work. This algorithm tries to create a list of nodes sorted in
+    // an order such that the nodes/tasks that need to be done first (no incoming neighbor) appear first in
+    // the list. It cannot however return a sorting if the graph has cycles.
+    private ArrayList<ArrayList<String>> topologicalSorting() {
         Set<String> scan = new HashSet<>();
         Set<String> toRemove = new HashSet<>();
         Set<String> toAdd = new HashSet<>();
@@ -31,7 +39,6 @@ public class GraphExtendedImpl<D> extends GraphImpl<D> implements GraphExtended<
             } catch (Exception ignored) {}
         }
 
-        // Run topological sorting algorithm, return false if there is a topological sorting
         while (!scan.isEmpty()) {
             for (String node : scan) {
                 toRemove.add(node);
@@ -48,8 +55,19 @@ public class GraphExtendedImpl<D> extends GraphImpl<D> implements GraphExtended<
             scan.addAll(toAdd);
             toAdd.clear();
         }
-        return !cloned.edges.isEmpty();
+
+        return cloned.edges;
     }
+
+    // Returns a set of nodes in the cycles
+    public Set<String> getCycles() {
+        Set<String> res = new HashSet<>();
+        for (ArrayList<String> edge : topologicalSorting()) {
+            res.addAll(edge);
+        }
+        return res;
+    }
+
 
     @Override
     public boolean isConnected() {
