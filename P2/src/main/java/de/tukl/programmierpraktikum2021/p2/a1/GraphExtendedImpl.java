@@ -62,8 +62,13 @@ public class GraphExtendedImpl<D> extends GraphImpl<D> implements GraphExtended<
         return cloned.edges;
     }
 
-    public ArrayList<ArrayList<String>> getCycles() {
-        return topologicalSorting();
+    // Returns a set of nodes in the cycles
+    public Set<String> getCycles() {
+        Set<String> res = new HashSet<>();
+        for (ArrayList<String> edge : topologicalSorting()) {
+            res.addAll(edge);
+        }
+        return res;
     }
 
     @Override
