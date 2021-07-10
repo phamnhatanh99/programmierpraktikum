@@ -55,6 +55,31 @@ public class GraphExtendedImpl<D> extends GraphImpl<D> implements GraphExtended<
             scan.addAll(toAdd);
             toAdd.clear();
         }
+        // Extend topological sorting to filter out everything but the cycles
+        // Add nodes without outgoing neighbors to scan set
+        for (String node : cloned.nodes.keySet()) {
+            try {
+                if (cloned.getOutgoingNeighbors(node).isEmpty())
+                    scan.add(node);
+            } catch (Exception ignored) {}
+        }
+
+        while (!scan.isEmpty()) {
+            for (String node : scan) {
+                toRemove.add(node);
+                try {
+                    for (String nodeIn : cloned.getIncomingNeighbors(node)) {
+                        cloned.edges.removeIf(edge -> edge.get(0).equals(nodeIn) && edge.get(1).equals(node));
+                        if (cloned.getOutgoingNeighbors(nodeIn).isEmpty())
+                            toAdd.add(nodeIn);
+                    }
+                } catch (Exception ignored) {}
+            }
+            scan.removeAll(toRemove);
+            toRemove.clear();
+            scan.addAll(toAdd);
+            toAdd.clear();
+        }
 
         return cloned.edges;
     }

@@ -9,7 +9,7 @@ public class PacmanImpl implements Pacman {
     protected final GraphExtendedImpl<Package> g = new GraphExtendedImpl<>();
     protected final Set<String> installed = new HashSet<>();
     protected final Set<String> explicitlyInstalled = new HashSet<>();
-
+    protected final Set<Set<String>> conflicts = new HashSet<>();
     @Override
     public void buildDependencyGraph() throws IOException {
         Util u = new Util("./src/main/resources/core-cycle.db.zip");
@@ -55,7 +55,11 @@ public class PacmanImpl implements Pacman {
                 }
             }
         }
-    //System.out.println(g);
+        for(String pack: u.getAllConflictingPackages()){
+            Set<String> conflictPair = new HashSet<>(u.getConflicts(pack));
+            conflictPair.add(pack);
+            conflicts.add(conflictPair);
+        };
     }
 
     @Override
@@ -123,7 +127,7 @@ public class PacmanImpl implements Pacman {
      * Names of installed package are stored in the list "install"
      * */
     @Override
-    public void install(String pkg) throws InvalidNodeException,IOException,ConflictException {
+    public void install(String pkg) throws InvalidNodeException{
         installed.remove(pkg);
         List<Package> toInstall = buildInstallList(pkg);
         for (Package p : toInstall) {

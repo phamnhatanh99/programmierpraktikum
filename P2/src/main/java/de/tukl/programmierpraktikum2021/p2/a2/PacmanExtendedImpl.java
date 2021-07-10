@@ -45,10 +45,8 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             level.clear();
             level.addAll(directDependencies);
             level.removeAll(installNameSet);
-           //System.out.println("level: "+level);
-            installNameSet.addAll(directDependencies);
-            //System.out.println("NameSet: "+installNameSet);
 
+            installNameSet.addAll(directDependencies);
         }
 
         installNameSet.removeAll(installed);
@@ -65,43 +63,43 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
      * Names of installed package are stored in the list "install"
      * */
     @Override
-    public void install(String pkg) throws InvalidNodeException, IOException, ConflictException{
-        Util u = new Util("./src/main/resources/core-cycle.db.zip");
-        List<Package> toInstall = buildInstallList(pkg);
-        Set<String> pkgTreeNodes = new HashSet<>();
-        //Build the set of nodes that are in dependency tree of pkg
-        pkgTreeNodes.add(pkg);
-        for (Package p : toInstall) {
-            pkgTreeNodes.add(p.getName());
+    public void install(String pkg) throws InvalidNodeException{
+        List<Package> packageList = buildInstallList(pkg);
+        Set<String> toInstall = new HashSet<>();
+        toInstall.add(pkg);
+        for (Package p : packageList) {
+            toInstall.add(p.getName());
         }
+        List<String> whatIf= new ArrayList<>(installed);
+        whatIf.addAll(toInstall);
         // Check if conflicted
-
-        for(String pack: pkgTreeNodes){
-            if(u.getConflicts(pack)!=null){
-                for(String conf:u.getConflicts(pack)){
-                    if (installed.contains(conf)){
-                        throw new ConflictException(pack);
-                    }
-                }
+        boolean conflicted = false;
+        for (Set<String> pair:conflicts){
+            if(whatIf.containsAll(pair)){
+                conflicted=true;
+                break;
             }
         }
 
 
-        Set<String> dbCycle = g.getCycles();
-        Set<String> cycle = new HashSet<>(pkgTreeNodes);
-        cycle.retainAll(dbCycle);
-        if(!cycle.isEmpty()){
-            String cycleString = String.join(",", cycle);
-            System.out.println(cycleString+" formed cyclic dependency!");
+        if (!conflicted) {
+            //Check for cycle
+            Set<String> dbCycle = g.getCycles();
+            Set<String> cycle = new HashSet<>(toInstall);
+            cycle.retainAll(dbCycle);
+            if (!cycle.isEmpty()) {
+                String cycleString = String.join(",", cycle);
+                System.out.println(cycleString + " formed cyclic dependency!");
+            }
+            //Install
+            installed.remove(pkg); //remove old version
+            installed.addAll(toInstall);
+            explicitlyInstalled.add(pkg);
+
+        }else{
+            System.out.println("Conflicts while installing "+pkg+ " detected!");
         }
-        //Install
-        installed.remove(pkg); //remove old version
-        installed.addAll(pkgTreeNodes);
-        explicitlyInstalled.add(pkg);
-
-
     }
-
 
     @Override
     public void remove(String pkg) throws InvalidNodeException {
