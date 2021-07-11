@@ -9,25 +9,30 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GraphExtendedTest {
     @Test
     public void testHasCycle1() throws GraphException {
-        GraphExtended<Integer> graph = new GraphExtendedImpl<>();
+        GraphExtendedImpl<Integer> graph = new GraphExtendedImpl<>();
         graph.addNode("A", 1);
         graph.addNode("B", 2);
         graph.addNode("C", 3);
+        graph.addNode("D", 3);
         graph.addEdge("A", "B");
         graph.addEdge("B", "C");
         graph.addEdge("C", "A");
+        graph.addEdge("C", "D");
         assertTrue(graph.hasCycle());
+        assertEquals(3, graph.getCycles().size());
+        assertFalse(graph.getCycles().contains("D"));
     }
 
     @Test
     public void testHasCycle2() throws GraphException {
-        GraphExtended<Integer> graph = new GraphExtendedImpl<>();
+        GraphExtendedImpl<Integer> graph = new GraphExtendedImpl<>();
         graph.addNode("A", 1);
         graph.addNode("B", 2);
         graph.addNode("C", 3);
         graph.addEdge("A", "B");
         graph.addEdge("B", "C");
         assertFalse(graph.hasCycle());
+        assertTrue(graph.getCycles().isEmpty());
     }
 
     @Test
@@ -94,6 +99,8 @@ public class GraphExtendedTest {
         assertThrows(InvalidNodeException.class, () -> graph.breadthFirstSearch("D", "A"));
         assertThrows(InvalidNodeException.class, () -> graph.breadthFirstSearch("A", null));
         assertThrows(InvalidNodeException.class, () -> graph.breadthFirstSearch(null, "A"));
+        assertThrows(InvalidNodeException.class, () -> graph.breadthFirstSearch("D", null));
+        assertThrows(InvalidNodeException.class, () -> graph.breadthFirstSearch(null, "D"));
         assertThrows(InvalidNodeException.class, () -> graph.breadthFirstSearch(null, null));
     }
 

@@ -40,19 +40,17 @@ public class PacmanImpl implements Pacman {
         for (String node : g.getNodeIds()) {
             if (u.getDependencies(node) != null) {
                 for (String dependence : u.getDependencies(node)) {
-                    // Check if the name of dependencies contains ">", then we have to remove the part after that
+                    // Check if the name of dependencies contains ">" or "=", then we have to remove the part after that
                     // so we don't get InvalidNodeException
                     if (!dependence.contains(">")) {
-                        if(dependence.contains("=")){
+                        if (dependence.contains("=")) {
                             try {
-                                g.addEdge(node,dependence.substring(0,dependence.indexOf("=")));
-                            } catch (Exception ignored) {}
+                                g.addEdge(node, dependence.substring(0, dependence.indexOf("=")));
+                            } catch (Exception ignored) {} // Skip if edge already exists
                         }
-                        else{
-                            try {
-                                g.addEdge(node,dependence);
-                            } catch (Exception ignored) {}
-                        }
+                        else try {
+                                g.addEdge(node, dependence);
+                            } catch (Exception ignored) {} // Skip if edge already exists
                     }
                     else try {
                         g.addEdge(node, dependence.substring(0, dependence.indexOf(">")));
@@ -61,7 +59,9 @@ public class PacmanImpl implements Pacman {
                 }
             }
         }
-        for(String pack: u.getAllConflictingPackages()){
+
+        // Create a set of all conflicting packages
+        for (String pack : u.getAllConflictingPackages()) {
             Set<String> conflictPair = new HashSet<>(u.getConflicts(pack));
             conflictPair.add(pack);
             conflicts.add(conflictPair);
@@ -82,7 +82,7 @@ public class PacmanImpl implements Pacman {
         StringBuilder res = new StringBuilder(g.getData(pkg) + "\n");
         Iterator<String> pkgs = g.getOutgoingNeighbors(pkg).iterator();
 
-        while(pkgs.hasNext()){
+        while(pkgs.hasNext()) {
             res.append(indent).append("|___").append(listPackages(pkgs.next(),indent + (pkgs.hasNext()? "|   ":"    ")));
         }
         return res.toString();
@@ -112,7 +112,7 @@ public class PacmanImpl implements Pacman {
 
         while (!level.isEmpty()) {
             LinkedHashSet<String> directDependencies = new LinkedHashSet<>();
-            for (String paket: level) {
+            for (String paket : level) {
                 directDependencies.addAll(g.getOutgoingNeighbors(paket));
             }
             installNameSet.addAll(directDependencies);
@@ -121,9 +121,9 @@ public class PacmanImpl implements Pacman {
 
         installNameSet.removeAll(installed);
 
-        List<String> nameList= new ArrayList<>(installNameSet);
+        List<String> nameList = new ArrayList<>(installNameSet);
         Collections.reverse(nameList);
-        for (String name: nameList) {
+        for (String name : nameList) {
             installList.add(g.getData(name));
         }
         return installList;

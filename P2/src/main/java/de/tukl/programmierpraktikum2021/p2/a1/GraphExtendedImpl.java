@@ -16,7 +16,6 @@ public class GraphExtendedImpl<D> extends GraphImpl<D> implements GraphExtended<
         }
     }
 
-
     @Override
     public boolean hasCycle() {
         // An empty graph is acyclic
@@ -96,7 +95,6 @@ public class GraphExtendedImpl<D> extends GraphImpl<D> implements GraphExtended<
         }
         return res;
     }
-
 
     @Override
     public boolean isConnected() {
