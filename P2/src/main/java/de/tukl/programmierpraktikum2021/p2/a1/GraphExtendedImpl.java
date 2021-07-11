@@ -10,8 +10,12 @@ public class GraphExtendedImpl<D> extends GraphImpl<D> implements GraphExtended<
 
     private GraphExtendedImpl(HashMap<String, D> nodes, ArrayList<ArrayList<String>> edges) {
         this.nodes = nodes;
-        this.edges = edges;
+        this.edges = new ArrayList<>(edges.size());
+        for (ArrayList<String> edge : edges) {
+            this.edges.add(new ArrayList<>(edge));
+        }
     }
+
 
     @Override
     public boolean hasCycle() {

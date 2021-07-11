@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.*;
 
 public class PacmanImpl implements Pacman {
-    protected final GraphExtendedImpl<Package> g = new GraphExtendedImpl<>();
-    protected final Set<String> installed = new HashSet<>();
-    protected final Set<String> explicitlyInstalled = new HashSet<>();
-    protected final Set<Set<String>> conflicts = new HashSet<>();
+    protected GraphExtendedImpl<Package> g = new GraphExtendedImpl<>();
+    protected Set<String> installed = new HashSet<>();
+    protected Set<String> explicitlyInstalled = new HashSet<>();
+    protected Set<Set<String>> conflicts = new HashSet<>();
     @Override
     public void buildDependencyGraph() throws IOException {
         Util u = new Util("./src/main/resources/core-cycle.db.zip");
@@ -28,9 +28,9 @@ public class PacmanImpl implements Pacman {
                 String name = virtualPackage.substring(0, virtualPackage.contains("=") ? virtualPackage.indexOf("=") : virtualPackage.length());
                 String version = virtualPackage.contains("=") ? virtualPackage.substring(virtualPackage.indexOf("=") + 1) : u.getVersion(providerPackage);
                 VirtualPackage pack = new VirtualPackage(name, version, providerPackage);
-                g.addNode(virtualPackage, pack);
+                g.addNode(name, pack);
                 try {
-                    g.addEdge(virtualPackage, providerPackage);
+                    g.addEdge(name, providerPackage);
                 }
                 catch (Exception ignored) {} // Skip if edge already exists
             }
@@ -43,10 +43,16 @@ public class PacmanImpl implements Pacman {
                     // Check if the name of dependencies contains ">", then we have to remove the part after that
                     // so we don't get InvalidNodeException
                     if (!dependence.contains(">")) {
-                        try {
-                            g.addEdge(node, dependence);
+                        if(dependence.contains("=")){
+                            try {
+                                g.addEdge(node,dependence.substring(0,dependence.indexOf("=")));
+                            } catch (Exception ignored) {}
                         }
-                        catch (Exception ignored) {} // Skip if edge already exists
+                        else{
+                            try {
+                                g.addEdge(node,dependence);
+                            } catch (Exception ignored) {}
+                        }
                     }
                     else try {
                         g.addEdge(node, dependence.substring(0, dependence.indexOf(">")));
@@ -59,7 +65,7 @@ public class PacmanImpl implements Pacman {
             Set<String> conflictPair = new HashSet<>(u.getConflicts(pack));
             conflictPair.add(pack);
             conflicts.add(conflictPair);
-        };
+        }
     }
 
     @Override
@@ -127,7 +133,7 @@ public class PacmanImpl implements Pacman {
      * Names of installed package are stored in the list "install"
      * */
     @Override
-    public void install(String pkg) throws InvalidNodeException{
+    public void install(String pkg) throws InvalidNodeException {
         installed.remove(pkg);
         List<Package> toInstall = buildInstallList(pkg);
         for (Package p : toInstall) {

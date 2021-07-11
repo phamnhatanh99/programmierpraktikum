@@ -2,9 +2,6 @@ package de.tukl.programmierpraktikum2021.p2.a2;
 import de.tukl.programmierpraktikum2021.p1.a1.InvalidNodeException;
 import de.tukl.programmierpraktikum2021.p1.a2.*;
 import de.tukl.programmierpraktikum2021.p1.a2.Package;
-
-
-import java.io.IOException;
 import java.util.*;
 
 public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
@@ -20,9 +17,9 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
     }
 
     @Override
-    public List<Package> buildInstallList(String pkg) throws InvalidNodeException {
-        List<Package> installList = new ArrayList<>();
+    public List<Package> buildInstallList(String pack) throws InvalidNodeException {
 
+        List<Package> installList = new ArrayList<>();
         LinkedHashSet<String> installNameSet = new LinkedHashSet<>() {
             @Override
             public boolean add (String s) {
@@ -32,25 +29,27 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
         };
 
         LinkedHashSet<String> level = new LinkedHashSet<>();
-        level.add(pkg);
-
+        level.add(pack);
         while (!level.isEmpty()) {
             LinkedHashSet<String> directDependencies = new LinkedHashSet<>();
+
             for (String paket: level) {
+
                 directDependencies.addAll(g.getOutgoingNeighbors(paket));
+
             }
             //Packages in cyclic dependency will appear again in directDependencies of one level
             //even when they are already added to installNameSet by some levels above.
             //Before passing directDependencies onto be the next level, remove all those package.
+
             level.clear();
             level.addAll(directDependencies);
             level.removeAll(installNameSet);
 
             installNameSet.addAll(directDependencies);
+
         }
-
         installNameSet.removeAll(installed);
-
         List<String> nameList= new ArrayList<>(installNameSet);
         Collections.reverse(nameList);
         for (String name: nameList) {
@@ -63,7 +62,7 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
      * Names of installed package are stored in the list "install"
      * */
     @Override
-    public void install(String pkg) throws InvalidNodeException{
+    public void install(String pkg) throws InvalidNodeException {
         List<Package> packageList = buildInstallList(pkg);
         Set<String> toInstall = new HashSet<>();
         toInstall.add(pkg);
@@ -81,7 +80,6 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             }
         }
 
-
         if (!conflicted) {
             //Check for cycle
             Set<String> dbCycle = g.getCycles();
@@ -93,7 +91,9 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             }
             //Install
             installed.remove(pkg); //remove old version
-            installed.addAll(toInstall);
+            for (Package p:packageList){
+                installed.add(p.getName());
+            }
             explicitlyInstalled.add(pkg);
 
         }else{
@@ -105,4 +105,5 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
     public void remove(String pkg) throws InvalidNodeException {
         throw new RuntimeException("TODO");
     }
+
 }
