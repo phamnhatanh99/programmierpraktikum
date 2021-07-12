@@ -17,6 +17,28 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
     }
 
     @Override
+    public String transitiveDependencies(String pkg) throws InvalidNodeException {
+        ArrayList<String> list = new ArrayList<String>();
+        return listPackagesNoCycles(pkg,"", list);
+    }
+
+    private String listPackagesNoCycles(String pkg, String indent,  ArrayList<String> pkgsList) throws InvalidNodeException {
+        StringBuilder res = new StringBuilder(g.getData(pkg) + "\n");
+        Iterator<String> pkgs = g.getOutgoingNeighbors(pkg).iterator();
+
+        if(pkgsList.contains(pkg)) {
+            return res.toString();
+        }
+        else{
+            pkgsList.add(pkg);
+            while(pkgs.hasNext()) {
+                res.append(indent).append("|___").append(listPackagesNoCycles(pkgs.next(),indent + (pkgs.hasNext()? "|   ":"    "), pkgsList));
+            }
+            return res.toString();
+        }
+    }
+
+    @Override
     public List<Package> buildInstallList(String pack) throws InvalidNodeException {
 
         List<Package> installList = new ArrayList<>();
