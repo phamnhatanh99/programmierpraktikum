@@ -93,9 +93,9 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             }
             // Install
             installed.remove(pkg); // Remove old version
-            for (Package p:packageList) {
-                installed.add(p.getName());
-            }
+
+            installed.addAll(toInstall);
+
             explicitlyInstalled.add(pkg);
         }
         else
