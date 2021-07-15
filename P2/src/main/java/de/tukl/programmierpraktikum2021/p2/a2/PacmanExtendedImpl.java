@@ -18,7 +18,7 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
 
     @Override
     public String transitiveDependencies(String pkg) throws InvalidNodeException {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         return listPackagesNoCycles(pkg,"", list);
     }
 
@@ -26,7 +26,7 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
         StringBuilder res = new StringBuilder(g.getData(pkg) + "\n");
         Iterator<String> pkgs = g.getOutgoingNeighbors(pkg).iterator();
 
-        if(pkgsList.contains(pkg)) {
+        if (pkgsList.contains(pkg)) {
             return res.toString();
         }
         else{
@@ -126,7 +126,38 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
 
     @Override
     public void remove(String pkg) throws InvalidNodeException {
-        throw new RuntimeException("TODO");
+        //Check if any package needs pkg
+        Set<String> anyoneRequires = whoRequires(pkg);
+        anyoneRequires.retainAll(installed);
+        //Compute the cycle in Graph
+        Set<String> cycle = g.getCycles();
+
+        if(anyoneRequires.isEmpty()){
+            installed.remove(pkg);
+            explicitlyInstalled.remove(pkg);
+            Set<String> directDependence= g.getOutgoingNeighbors(pkg);
+
+            //remove all implicitly installed packages
+            while(!directDependence.isEmpty()){
+                Set<String> nextLevel = new HashSet<>();
+                for(String pack: directDependence){
+                    nextLevel.addAll(g.getOutgoingNeighbors(pack));
+                    Set<String> needy = whoRequires(pack);
+                    needy.retainAll(installed);
+                    if (needy.isEmpty()){
+                        installed.remove(pack);
+                        explicitlyInstalled.remove(pack);
+                    }
+                }
+                nextLevel.removeAll(cycle);
+                //passing all dependencies onto next level except for ones in cycle
+                directDependence = nextLevel;
+            }
+        }
+        else{
+            System.out.println(anyoneRequires+ " still depend(s) on "+ pkg);
+        }
     }
+
 
 }
