@@ -110,7 +110,22 @@ public class PacmanExtendedTest {
     public void testRemove() throws IOException, InvalidNodeException {
         PacmanExtended pacman = new PacmanExtendedImpl();
         pacman.buildDependencyGraph();
+        pacman.install("linux-api-headers");
+        pacman.remove("linux-api-headers");
+        Set<String> res = pacman.getInstalledExplicitly();
+        assertTrue(res.isEmpty());
 
+        pacman.install("sqlite");
+        pacman.remove("zlib");
+        Set<String> res2 = pacman.getInstalled();
+        assertFalse(res2.contains("zlib"));
+        pacman.remove("sqlite");
+        Set<String> res3 = pacman.getInstalled();
+        assertFalse(res3.contains("sqlite"));
+        
+        pacman.install("glibc");
+        pacman.remove("glibc");
+        pacman.remove("ncurses");
         assertThrows(InvalidNodeException.class , () -> pacman.remove("notInstalled"));
     }
 
