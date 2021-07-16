@@ -29,10 +29,6 @@ public class PacmanImpl implements Pacman {
                 String version = virtualPackage.contains("=") ? virtualPackage.substring(virtualPackage.indexOf("=") + 1) : u.getVersion(providerPackage);
                 VirtualPackage pack = new VirtualPackage(name, version, providerPackage);
                 g.addNode(name, pack);
-                try {
-                    g.addEdge(name, providerPackage);
-                }
-                catch (Exception ignored) {} // Skip if edge already exists
             }
         }
 
