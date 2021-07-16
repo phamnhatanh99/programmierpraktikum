@@ -2,6 +2,7 @@ package de.tukl.programmierpraktikum2021.p2.a2;
 import de.tukl.programmierpraktikum2021.p1.a1.InvalidNodeException;
 import de.tukl.programmierpraktikum2021.p1.a2.*;
 import de.tukl.programmierpraktikum2021.p1.a2.Package;
+
 import java.util.*;
 
 public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
@@ -32,15 +33,20 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
         level.add(pack);
         while (!level.isEmpty()) {
             LinkedHashSet<String> directDependencies = new LinkedHashSet<>();
-
             for (String paket: level) {
-
+                Package p = g.getData(paket);
+                if(g.getData(paket) instanceof VirtualPackage){
+                    directDependencies.add(((VirtualPackage) p).getVirtualSource());
+                    installNameSet.remove(paket);
+                }
+                else{
                 directDependencies.addAll(g.getOutgoingNeighbors(paket));
+                }
 
             }
             //Packages in cyclic dependency will appear again in directDependencies of one level
             //even when they are already added to installNameSet by some levels above.
-            //Before passing directDependencies onto be the next level, remove all those package.
+            //Before passing directDependencies onto next level, remove all those package.
 
             level.clear();
             level.addAll(directDependencies);
@@ -49,6 +55,7 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             installNameSet.addAll(directDependencies);
 
         }
+
         installNameSet.removeAll(installed);
         List<String> nameList= new ArrayList<>(installNameSet);
         Collections.reverse(nameList);
@@ -62,7 +69,7 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
      * Names of installed package are stored in the list "install"
      * */
     @Override
-    public void install(String pkg) throws InvalidNodeException {
+    public void install(String pkg) throws InvalidNodeException{
         List<Package> packageList = buildInstallList(pkg);
         Set<String> toInstall = new HashSet<>();
         toInstall.add(pkg);
@@ -91,19 +98,51 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             }
             //Install
             installed.remove(pkg); //remove old version
-            for (Package p:packageList){
-                installed.add(p.getName());
-            }
+//            for(String p: toInstall){
+//                if(providerAndVirtual.containsKey(p)) installed.addAll(providerAndVirtual.get(p));
+//                installed.add(p);
+//            }
+            installed.addAll(toInstall);
             explicitlyInstalled.add(pkg);
 
-        }else{
+        }else {
             System.out.println("Conflicts while installing "+pkg+ " detected!");
         }
     }
 
     @Override
     public void remove(String pkg) throws InvalidNodeException {
-        throw new RuntimeException("TODO");
+        // Check if any package needs pkg
+        Set<String> anyoneRequires = whoRequires(pkg);
+        anyoneRequires.retainAll(installed);
+        // Compute the cycle in Graph
+        Set<String> cycle = g.getCycles();
+
+        if (anyoneRequires.isEmpty()) {
+            installed.remove(pkg);
+            explicitlyInstalled.remove(pkg);
+            Set<String> directDependence = g.getOutgoingNeighbors(pkg);
+
+            // Remove all implicitly installed packages
+            while (!directDependence.isEmpty()) {
+                Set<String> nextLevel = new HashSet<>();
+                for (String pack : directDependence) {
+                    nextLevel.addAll(g.getOutgoingNeighbors(pack));
+                    Set<String> needy = whoRequires(pack);
+                    needy.retainAll(installed);
+                    if (needy.isEmpty()) {
+                        installed.remove(pack);
+                        explicitlyInstalled.remove(pack);
+                    }
+                }
+                nextLevel.removeAll(cycle);
+                // Passing all dependencies onto next level except for ones in cycle
+                directDependence = nextLevel;
+            }
+        }
+        else
+            System.out.println(anyoneRequires + " still depend(s) on " + pkg);
     }
+
 
 }
