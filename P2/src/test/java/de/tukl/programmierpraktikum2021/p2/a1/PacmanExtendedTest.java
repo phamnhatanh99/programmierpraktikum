@@ -100,10 +100,10 @@ public class PacmanExtendedTest {
         pacman.buildDependencyGraph();
 
         pacman.install("iptables");
-        pacman.install("iptables");
-
-
-
+        pacman.install("iptables-nft");
+        Set<String> res = pacman.getInstalledExplicitly();
+        assertFalse(res.contains("iptables-nft"));
+        assertTrue(res.contains("iptables"));
     }
 
     @Test
