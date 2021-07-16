@@ -122,11 +122,17 @@ public class PacmanExtendedTest {
         pacman.remove("sqlite");
         Set<String> res3 = pacman.getInstalled();
         assertFalse(res3.contains("sqlite"));
-        
+
+        pacman.install("zlib");
+        pacman.remove("zlib");
+        Set<String> res4 = pacman.getInstalledExplicitly();
+        assertFalse(res4.contains("zlib"));
+        assertTrue(res4.isEmpty());
+
         pacman.install("glibc");
         pacman.remove("glibc");
         pacman.remove("ncurses");
-        assertThrows(InvalidNodeException.class , () -> pacman.remove("notInstalled"));
+        assertThrows(InvalidNodeException.class, () -> pacman.remove("notInstalled"));
     }
 
 }
