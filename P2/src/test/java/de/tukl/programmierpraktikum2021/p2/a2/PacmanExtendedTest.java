@@ -1,14 +1,9 @@
 package de.tukl.programmierpraktikum2021.p2.a2;
-
 import de.tukl.programmierpraktikum2021.p1.a1.InvalidNodeException;
-import de.tukl.programmierpraktikum2021.p1.a2.*;
 import de.tukl.programmierpraktikum2021.p1.a2.Package;
-
 import java.io.IOException;
 import java.util.*;
-
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PacmanExtendedTest {
