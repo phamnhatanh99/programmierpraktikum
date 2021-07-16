@@ -118,7 +118,7 @@ public class PacmanExtendedTest {
         pacman.install("sqlite");
         pacman.remove("zlib");
         Set<String> res2 = pacman.getInstalled();
-        assertFalse(res2.contains("zlib"));
+        assertTrue(res2.contains("zlib"));
         pacman.remove("sqlite");
         Set<String> res3 = pacman.getInstalled();
         assertFalse(res3.contains("sqlite"));
