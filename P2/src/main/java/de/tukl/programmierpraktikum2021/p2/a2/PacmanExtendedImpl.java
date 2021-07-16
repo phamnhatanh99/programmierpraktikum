@@ -37,12 +37,10 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             return res.toString();
         }
     }
-
     @Override
     public List<Package> buildInstallList(String pack) throws InvalidNodeException {
 
         List<Package> installList = new ArrayList<>();
-
         LinkedHashSet<String> installNameSet = new LinkedHashSet<>() {
             @Override
             public boolean add (String s) {
@@ -53,27 +51,35 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
 
         LinkedHashSet<String> level = new LinkedHashSet<>();
         level.add(pack);
-
         while (!level.isEmpty()) {
             LinkedHashSet<String> directDependencies = new LinkedHashSet<>();
-
             for (String paket: level) {
-                directDependencies.addAll(g.getOutgoingNeighbors(paket));
-            }
+                Package p = g.getData(paket);
+                //if the package is virtual, remove itself from the list to add its provider instead
+                if(g.getData(paket) instanceof VirtualPackage){
+                    directDependencies.add(((VirtualPackage) p).getVirtualSource());
+                    installNameSet.remove(paket);
+                }
+                else{
+                    directDependencies.addAll(g.getOutgoingNeighbors(paket));
+                }
 
-            // Packages in cyclic dependency will appear again in directDependencies of one level
-            // even when they are already added to installNameSet by some levels above.
-            // Before passing directDependencies onto be the next level, remove all those package.
+            }
+            //Packages in cyclic dependency will appear again in directDependencies of one level
+            //even when they are already added to installNameSet by some levels above.
+            //Before passing directDependencies onto next level, remove all those package.
             level.clear();
             level.addAll(directDependencies);
             level.removeAll(installNameSet);
+
             installNameSet.addAll(directDependencies);
+
         }
 
         installNameSet.removeAll(installed);
-        List<String> nameList = new ArrayList<>(installNameSet);
+        List<String> nameList= new ArrayList<>(installNameSet);
         Collections.reverse(nameList);
-        for (String name : nameList) {
+        for (String name: nameList) {
             installList.add(g.getData(name));
         }
         return installList;
@@ -83,45 +89,41 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
      * Names of installed package are stored in the list "install"
      * */
     @Override
-    public void install(String pkg) throws InvalidNodeException {
+    public void install(String pkg) throws InvalidNodeException{
         List<Package> packageList = buildInstallList(pkg);
         Set<String> toInstall = new HashSet<>();
         toInstall.add(pkg);
-
         for (Package p : packageList) {
             toInstall.add(p.getName());
         }
-
-        List<String> whatIf = new ArrayList<>(installed);
+        List<String> whatIf= new ArrayList<>(installed);
         whatIf.addAll(toInstall);
-
         // Check if conflicted
         boolean conflicted = false;
-        for (Set<String> pair : conflicts) {
-            if (whatIf.containsAll(pair)) {
-                conflicted = true;
+        for (Set<String> pair:conflicts){
+            if(whatIf.containsAll(pair)){
+                conflicted=true;
                 break;
             }
         }
 
         if (!conflicted) {
-            // Check for cycle
+            //Check for cycle
             Set<String> dbCycle = g.getCycles();
             Set<String> cycle = new HashSet<>(toInstall);
             cycle.retainAll(dbCycle);
             if (!cycle.isEmpty()) {
-                String cycleString = String.join(", ", cycle);
+                String cycleString = String.join(",", cycle);
                 System.out.println(cycleString + " formed cyclic dependency!");
             }
-            // Install
-            installed.remove(pkg); // Remove old version
-
+            //Install
+            installed.remove(pkg); //remove old version
             installed.addAll(toInstall);
-
             explicitlyInstalled.add(pkg);
+
+        }else {
+            System.out.println("Conflicts while installing "+pkg+ " detected!");
         }
-        else
-            System.out.println("Conflicts while installing " + pkg + " detected!");
     }
 
     @Override
