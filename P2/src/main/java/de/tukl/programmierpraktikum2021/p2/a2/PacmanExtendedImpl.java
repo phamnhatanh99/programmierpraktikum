@@ -2,6 +2,7 @@ package de.tukl.programmierpraktikum2021.p2.a2;
 import de.tukl.programmierpraktikum2021.p1.a1.InvalidNodeException;
 import de.tukl.programmierpraktikum2021.p1.a2.*;
 import de.tukl.programmierpraktikum2021.p1.a2.Package;
+
 import java.util.*;
 
 public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
@@ -18,25 +19,27 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
 
     @Override
     public String transitiveDependencies(String pkg) throws InvalidNodeException {
-        ArrayList<String> list = new ArrayList<>();
-        return listPackagesNoCycles(pkg,"", list);
+        return listPackagesNoCycles(pkg,"", new ArrayList<>());
     }
 
-    private String listPackagesNoCycles(String pkg, String indent,  ArrayList<String> pkgsList) throws InvalidNodeException {
+    private String listPackagesNoCycles(String pkg, String indent, ArrayList<String> parents) throws InvalidNodeException {
         StringBuilder res = new StringBuilder(g.getData(pkg) + "\n");
         Iterator<String> pkgs = g.getOutgoingNeighbors(pkg).iterator();
 
-        if (pkgsList.contains(pkg)) {
+        if (parents.contains(pkg)) {
+            parents.add("End");
             return res.toString();
         }
         else{
-            pkgsList.add(pkg);
+            parents.add(pkg);
             while(pkgs.hasNext()) {
-                res.append(indent).append("|___").append(listPackagesNoCycles(pkgs.next(),indent + (pkgs.hasNext()? "|   ":"    "), pkgsList));
+                res.append(indent).append("|___").append(listPackagesNoCycles(pkgs.next(),indent + (pkgs.hasNext()? "|   ":"    "), parents));
+                parents.remove(parents.size() - 1);
             }
             return res.toString();
         }
     }
+
     @Override
     public List<Package> buildInstallList(String pack) throws InvalidNodeException {
 
