@@ -48,26 +48,30 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
                 return super.add(s);
             }
         };
-
+        installNameSet.add(pack);
         LinkedHashSet<String> level = new LinkedHashSet<>();
         level.add(pack);
         while (!level.isEmpty()) {
             LinkedHashSet<String> directDependencies = new LinkedHashSet<>();
             for (String paket: level) {
-                Package p = g.getData(paket);
-                //if the package is virtual, remove itself from the list to add its provider instead
-                if(g.getData(paket) instanceof VirtualPackage){
-                    directDependencies.add(((VirtualPackage) p).getVirtualSource());
-                    installNameSet.remove(paket);
-                }
-                else{
-                    directDependencies.addAll(g.getOutgoingNeighbors(paket));
-                }
+                    Package p = g.getData(paket);
+                    // If the package is virtual, remove itself from the list to add its provider instead
+                    if(g.getData(paket) instanceof VirtualPackage) {
+                        directDependencies.add(((VirtualPackage) p).getVirtualSource());
+                        installNameSet.remove(paket);
+                    }
+                    else {
+                        for(String pkt: g.getOutgoingNeighbors(paket)){
+                            if(!pkt.equals(pack)) directDependencies.add(pkt);
+                        }
+                    }
+
+
 
             }
-            //Packages in cyclic dependency will appear again in directDependencies of one level
-            //even when they are already added to installNameSet by some levels above.
-            //Before passing directDependencies onto next level, remove all those package.
+            // Packages in cyclic dependency will appear again in directDependencies of one level
+            // even when they are already added to installNameSet by some levels above.
+            // Before passing directDependencies onto next level, remove all those package.
             level.clear();
             level.addAll(directDependencies);
             level.removeAll(installNameSet);
@@ -92,23 +96,22 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
     public void install(String pkg) throws InvalidNodeException{
         List<Package> packageList = buildInstallList(pkg);
         Set<String> toInstall = new HashSet<>();
-        toInstall.add(pkg);
         for (Package p : packageList) {
             toInstall.add(p.getName());
         }
-        List<String> whatIf= new ArrayList<>(installed);
+        List<String> whatIf = new ArrayList<>(installed);
         whatIf.addAll(toInstall);
         // Check if conflicted
         boolean conflicted = false;
         for (Set<String> pair:conflicts){
             if(whatIf.containsAll(pair)){
-                conflicted=true;
+                conflicted = true;
                 break;
             }
         }
 
         if (!conflicted) {
-            //Check for cycle
+            // Check for cycle
             Set<String> dbCycle = g.getCycles();
             Set<String> cycle = new HashSet<>(toInstall);
             cycle.retainAll(dbCycle);
@@ -116,14 +119,14 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
                 String cycleString = String.join(",", cycle);
                 System.out.println(cycleString + " formed cyclic dependency!");
             }
-            //Install
-            installed.remove(pkg); //remove old version
+            // Install
+            installed.remove(pkg); // Remove old version
             installed.addAll(toInstall);
             explicitlyInstalled.add(pkg);
 
-        }else {
-            System.out.println("Conflicts while installing "+pkg+ " detected!");
         }
+        else System.out.println("Conflicts while installing "+pkg+ " detected!");
+
     }
 
     @Override
