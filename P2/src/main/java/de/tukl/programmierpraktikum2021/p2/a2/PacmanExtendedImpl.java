@@ -2,7 +2,6 @@ package de.tukl.programmierpraktikum2021.p2.a2;
 import de.tukl.programmierpraktikum2021.p1.a1.InvalidNodeException;
 import de.tukl.programmierpraktikum2021.p1.a2.*;
 import de.tukl.programmierpraktikum2021.p1.a2.Package;
-import de.tukl.programmierpraktikum2021.p2.a1.GraphExtendedImpl;
 
 import java.util.*;
 
