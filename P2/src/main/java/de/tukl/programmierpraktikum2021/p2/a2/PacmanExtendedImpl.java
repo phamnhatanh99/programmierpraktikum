@@ -30,9 +30,9 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             parents.add("End");
             return res.toString();
         }
-        else{
+        else {
             parents.add(pkg);
-            while(pkgs.hasNext()) {
+            while (pkgs.hasNext()) {
                 res.append(indent).append("|___").append(listPackagesNoCycles(pkgs.next(),indent + (pkgs.hasNext()? "|   ":"    "), parents));
                 parents.remove(parents.size() - 1);
             }
@@ -59,18 +59,15 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             for (String paket: level) {
                     Package p = g.getData(paket);
                     // If the package is virtual, remove itself from the list to add its provider instead
-                    if(g.getData(paket) instanceof VirtualPackage) {
+                    if (g.getData(paket) instanceof VirtualPackage) {
                         directDependencies.add(((VirtualPackage) p).getVirtualSource());
                         installNameSet.remove(paket);
                     }
                     else {
-                        for(String pkt: g.getOutgoingNeighbors(paket)){
-                            if(!pkt.equals(pack)) directDependencies.add(pkt);
+                        for (String pkt: g.getOutgoingNeighbors(paket)) {
+                            if (!pkt.equals(pack)) directDependencies.add(pkt);
                         }
                     }
-
-
-
             }
             // Packages in cyclic dependency will appear again in directDependencies of one level
             // even when they are already added to installNameSet by some levels above.
@@ -80,7 +77,6 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             level.removeAll(installNameSet);
 
             installNameSet.addAll(directDependencies);
-
         }
 
         installNameSet.removeAll(installed);
@@ -96,7 +92,7 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
      * Names of installed package are stored in the list "install"
      * */
     @Override
-    public void install(String pkg) throws InvalidNodeException{
+    public void install(String pkg) throws InvalidNodeException {
         List<Package> packageList = buildInstallList(pkg);
         Set<String> toInstall = new HashSet<>();
         for (Package p : packageList) {
@@ -106,8 +102,8 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
         whatIf.addAll(toInstall);
         // Check if conflicted
         boolean conflicted = false;
-        for (Set<String> pair:conflicts){
-            if(whatIf.containsAll(pair)){
+        for (Set<String> pair:conflicts) {
+            if (whatIf.containsAll(pair)) {
                 conflicted = true;
                 break;
             }
@@ -128,8 +124,7 @@ public class PacmanExtendedImpl extends PacmanImpl implements PacmanExtended {
             explicitlyInstalled.add(pkg);
 
         }
-        else System.out.println("Conflicts while installing "+pkg+ " detected!");
-
+        else System.out.println("Conflicts while installing " + pkg + " detected!");
     }
 
     @Override

@@ -1,9 +1,7 @@
 package de.tukl.programmierpraktikum2021.p2.a1;
 import de.tukl.programmierpraktikum2021.p1.a1.*;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GraphExtendedTest {

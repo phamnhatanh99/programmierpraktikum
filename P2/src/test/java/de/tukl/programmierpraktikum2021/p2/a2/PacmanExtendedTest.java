@@ -47,7 +47,8 @@ public class PacmanExtendedTest {
         assertTrue(res.contains("filesystem-2021.05.31-1"));
         assertTrue(res.contains("ncurses provides libncursesw.so-6-64"));
         assertTrue(res.contains("glibc-2.33-5"));
-        assertEquals(4, countOccurrences(res, "glibc-2.33-5"));
+        assertEquals(10, countOccurrences(res, "glibc-2.33-5"));
+        assertEquals(6, countOccurrences(res, "iana"));
         assertEquals(1, countOccurrences(res, "provides"));
     }
 
@@ -56,20 +57,20 @@ public class PacmanExtendedTest {
         PacmanExtended pacman = new PacmanExtendedImpl();
         pacman.buildDependencyGraph();
 
-        List<Package> res1 = pacman.buildInstallList("glibc");
-        assertEquals(7, res1.size());
-        assertEquals("filesystem", res1.get(0).getName());
-        assertEquals("2021.05.31-1", res1.get(0).getVersion());
+        List<Package> res1 = pacman.buildInstallList("readline");
+        assertEquals(8, res1.size());
+        assertEquals("glibc", res1.get(0).getName());
+        assertEquals("2.33-5", res1.get(0).getVersion());
         List<String> res2 = new ArrayList<>();
         for (Package p : res1) {
             res2.add(p.getName());
         }
 
-        assertTrue(res2.containsAll(Arrays.asList("linux-api-headers", "tzdata", "filesystem")));
+        assertTrue(res2.containsAll(Arrays.asList("iana-etc", "ncurses", "gcc-libs", "filesystem", "tzdata", "readline")));
+        assertFalse(res2.contains("libncursesw.so"));
 
         assertThrows(InvalidNodeException.class, () -> pacman.buildInstallList("coincard"));
     }
-
 
     @Test
     public void testInstall2() throws IOException, InvalidNodeException {
@@ -129,6 +130,5 @@ public class PacmanExtendedTest {
         pacman.remove("ncurses");
         assertThrows(InvalidNodeException.class, () -> pacman.remove("notInstalled"));
     }
-
 }
 
